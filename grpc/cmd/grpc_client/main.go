@@ -10,7 +10,7 @@ import (
 	"log"
 	"time"
 
-	desc "github.com/iosakurov/auth/grpc/pkg/chat_server_v1"
+	desc "github.com/iosakurov/chat-server/grpc/pkg/chat_server_v1"
 )
 
 const address = "localhost:50051"
