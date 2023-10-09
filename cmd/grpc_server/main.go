@@ -7,7 +7,7 @@ import (
 	"net"
 
 	"github.com/brianvoe/gofakeit"
-	desc "github.com/iosakurov/chat-server/grpc/pkg/chat_server_v1"
+	desc "github.com/iosakurov/chat-server/pkg/chat_server_v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -20,7 +20,7 @@ type server struct {
 }
 
 func (s *server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
-	log.Printf("Create usernames: %d\n", req.GetUsernames())
+	log.Printf("Create usernames: %s\n", req.GetUsernames())
 
 	return &desc.CreateResponse{Id: gofakeit.Int64()}, nil
 

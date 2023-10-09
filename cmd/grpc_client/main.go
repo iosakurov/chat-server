@@ -10,7 +10,7 @@ import (
 	"log"
 	"time"
 
-	desc "github.com/iosakurov/chat-server/grpc/pkg/chat_server_v1"
+	desc "github.com/iosakurov/chat-server/pkg/chat_server_v1"
 )
 
 const address = "localhost:50051"
@@ -23,21 +23,26 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to connect to server: %v", err)
 	}
-	defer conn.Close()
+	defer func(conn *grpc.ClientConn) {
+		e := conn.Close()
+		if e != nil {
+			log.Fatal("Произошла ошибка!")
+		}
+	}(conn)
 
 	client := desc.NewChatAPIClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	log.Printf(color.RedString("ChatAPI Create\n"))
+	log.Print(color.RedString("ChatAPI Create\n"))
 	response, err := client.Create(ctx, &desc.CreateRequest{Usernames: usernames})
 	if err != nil {
 		log.Fatalf("failed to create request: %v", err)
 	}
 	log.Printf(color.RedString("Create Response:\n"), color.GreenString("%+v", response.GetId()))
 
-	log.Printf(color.RedString("ChatAPI SendMessage\n"))
+	log.Print(color.RedString("ChatAPI SendMessage\n"))
 	sendResponse, sendErr := client.SendMessage(ctx, &desc.SendMessageRequest{
 		From:      gofakeit.Name(),
 		Text:      gofakeit.Quote(),
@@ -48,7 +53,7 @@ func main() {
 	}
 	log.Printf(color.RedString("SendMessage Response:\n"), color.GreenString("%+v", sendResponse))
 
-	log.Printf(color.RedString("ChatAPI Delete\n"))
+	log.Print(color.RedString("ChatAPI Delete\n"))
 	deleteResponse, deleteErr := client.Delete(ctx, &desc.DeleteRequest{Id: 666})
 	if deleteErr != nil {
 		log.Fatalf("failed to delete: %v", deleteErr)

@@ -5,7 +5,7 @@ package chat_server_v1;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "github.com/iosakurov/auth/grpc/pkg/chat_server_v1;chat_server_v1";
+option go_package = "github.com/iosakurov/auth/pkg/chat_server_v1;chat_server_v1";
 
 service ChatAPI {
   rpc Create(CreateRequest) returns (CreateResponse);
