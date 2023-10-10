@@ -18,17 +18,16 @@ const address = "localhost:50051"
 var usernames = []string{gofakeit.Name(), gofakeit.Name()}
 
 func main() {
-
 	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("failed to connect to server: %v", err)
 	}
-	defer func(conn *grpc.ClientConn) {
-		e := conn.Close()
-		if e != nil {
+	defer func() {
+		err = conn.Close()
+		if err != nil {
 			log.Fatal("Произошла ошибка!")
 		}
-	}(conn)
+	}()
 
 	client := desc.NewChatAPIClient(conn)
 
@@ -43,21 +42,20 @@ func main() {
 	log.Printf(color.RedString("Create Response:\n"), color.GreenString("%+v", response.GetId()))
 
 	log.Print(color.RedString("ChatAPI SendMessage\n"))
-	sendResponse, sendErr := client.SendMessage(ctx, &desc.SendMessageRequest{
+	sendResponse, err := client.SendMessage(ctx, &desc.SendMessageRequest{
 		From:      gofakeit.Name(),
 		Text:      gofakeit.Quote(),
 		Timestamp: timestamppb.New(gofakeit.Date()),
 	})
-	if sendErr != nil {
-		log.Fatalf("failed to send message: %v", sendErr)
+	if err != nil {
+		log.Fatalf("failed to send message: %v", err)
 	}
 	log.Printf(color.RedString("SendMessage Response:\n"), color.GreenString("%+v", sendResponse))
 
 	log.Print(color.RedString("ChatAPI Delete\n"))
-	deleteResponse, deleteErr := client.Delete(ctx, &desc.DeleteRequest{Id: 666})
-	if deleteErr != nil {
-		log.Fatalf("failed to delete: %v", deleteErr)
+	deleteResponse, err := client.Delete(ctx, &desc.DeleteRequest{Id: 666})
+	if err != nil {
+		log.Fatalf("failed to delete: %v", err)
 	}
 	log.Printf(color.RedString("Delete Response:\n"), color.GreenString("%+v", deleteResponse))
-
 }
